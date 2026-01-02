@@ -121,18 +121,21 @@ struct FilterChip: View {
 }
 
 // MARK: - Equipment Type Extension
+// Extension to provide additional functionality for the EquipmentType enum
 extension EquipmentType {
+    // Returns an icon name (SF Symbol) representing the equipment type
     var icon: String {
         switch self {
-        case .bodyweight: return "figure.walk"
-        case .barbell: return "arrow.left.and.right"
-        case .dumbbell: return "dumbbell"
-        case .machine: return "gearshape"
-        case .cable: return "cable.connector"
+        case .bodyweight: return "figure.walk" // Icon for bodyweight exercises
+        case .barbell: return "arrow.left.and.right" // Icon for barbell exercises
+        case .dumbbell: return "dumbbell" // Icon for dumbbell exercises
+        case .machine: return "gearshape" // Icon for machine-based exercises
+        case .cable: return "cable.connector" // Icon for cable-based exercises
         }
     }
 }
 
+// Preview provider for SwiftUI previews
 #Preview {
-    ExercisePickerView(viewModel: WorkoutViewModel())
+    ExercisePickerView(viewModel: WorkoutViewModel()) // Preview the ExercisePickerView
 }

@@ -93,31 +93,36 @@ struct LogSetView: View {
         }
     }
     
+    // Function to save the set details entered by the user
     private func saveSet() {
+        // Ensure the reps input is valid and greater than 0
         guard let repsInt = Int(reps), repsInt > 0 else { return }
         
+        // Determine the weight value based on the exercise type
         let weightDouble: Double? = if exercise.equipmentType == .bodyweight {
-            nil
+            nil // No weight for bodyweight exercises
         } else if let w = Double(weight), w > 0 {
-            w
+            w // Use the entered weight if valid
         } else {
-            nil
+            nil // Default to nil if weight is invalid
         }
         
+        // Notify the ViewModel to complete the set with the provided details
         viewModel.completeSet(
             exerciseIndex: exerciseIndex,
             reps: repsInt,
             weight: weightDouble
         )
         
+        // Dismiss the view after saving the set
         dismiss()
     }
 }
 
 #Preview {
     LogSetView(
-        viewModel: WorkoutViewModel(),
-        exerciseIndex: 0,
-        exercise: Exercise(name: "Bench Press", muscleGroup: .chest, equipmentType: .barbell)
+        viewModel: WorkoutViewModel(), // Provide a WorkoutViewModel instance for the preview
+        exerciseIndex: 0, // Example exercise index
+        exercise: Exercise(name: "Bench Press", muscleGroup: .chest, equipmentType: .barbell) // Example exercise
     )
 }

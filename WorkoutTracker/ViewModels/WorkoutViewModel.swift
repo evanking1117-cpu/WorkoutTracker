@@ -73,19 +73,24 @@ final class WorkoutViewModel: ObservableObject {
     }
     
     func deleteSet(exerciseIndex: Int, setIndex: Int) {
+        // Ensure there is an active workout
         guard currentWorkout != nil else { return }
+        // Remove the set at the specified index from the exercise session
         currentWorkout?.exercises[exerciseIndex].sets.remove(at: setIndex)
     }
     
     // MARK: - Data Loading
+    // Loads the workout history from the data store
     private func loadWorkoutHistory() {
-        isLoading = true
-        workoutHistory = dataStore.loadWorkouts()
-        isLoading = false
+        isLoading = true // Set loading state to true
+        workoutHistory = dataStore.loadWorkouts() // Load workouts from the data store
+        isLoading = false // Set loading state to false
     }
     
+    // Deletes a workout from the history and the data store
+    // - Parameter workout: The workout to be deleted
     func deleteWorkout(_ workout: Workout) {
-        dataStore.deleteWorkout(workout)
-        workoutHistory.removeAll { $0.id == workout.id }
+        dataStore.deleteWorkout(workout) // Delete the workout from the data store
+        workoutHistory.removeAll { $0.id == workout.id } // Remove the workout from the history
     }
 }
