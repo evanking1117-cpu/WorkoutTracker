@@ -14,17 +14,17 @@ struct ActiveWorkoutView: View {
     @State private var showingExercisePicker = false
     // State to track the selected exercise index for logging sets
     @State private var selectedExerciseIndex: Int?
-    // State to control the visibility of the log set sheet
-    @State private var showingLogSet = false
     // Environment variable to dismiss the current view
     @Environment(\.dismiss) private var dismiss
+    // Timer to force view updates for real-time clock
+    @State private var currentTime = Date()
     
     var body: some View {
         VStack(spacing: 0) {
             // Header section for the workout
             workoutHeader
             Divider()
-            
+
             // Display the list of exercises if the workout has exercises
             if let workout = viewModel.currentWorkout, !workout.exercises.isEmpty {
                 exerciseList
@@ -50,16 +50,28 @@ struct ActiveWorkoutView: View {
             ExercisePickerView(viewModel: viewModel)
         }
         // Sheet for logging a set for a specific exercise
-        .sheet(isPresented: $showingLogSet) {
-            if let index = selectedExerciseIndex,
-               let workout = viewModel.currentWorkout,
-               index < workout.exercises.count {
-                LogSetView(
-                    viewModel: viewModel,
-                    exerciseIndex: index,
-                    exercise: workout.exercises[index].exercise
-                )
+        .sheet(item: Binding(
+            get: {
+                guard let index = selectedExerciseIndex,
+                      let workout = viewModel.currentWorkout,
+                      index < workout.exercises.count else { return nil }
+                return SelectedExercise(index: index, exercise: workout.exercises[index].exercise)
+            },
+            set: { newValue in
+                if newValue == nil {
+                    selectedExerciseIndex = nil
+                }
             }
+        )) { selection in
+            LogSetView(
+                viewModel: viewModel,
+                exerciseIndex: selection.index,
+                exercise: selection.exercise
+            )
+        }
+        // Timer to update the clock every second
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+            currentTime = Date()
         }
     }
     
@@ -89,7 +101,6 @@ struct ActiveWorkoutView: View {
                         session: session,
                         onAddSet: {
                             selectedExerciseIndex = index
-                            showingLogSet = true  // ← Added this
                         },
                         onDeleteSet: { setIndex in
                             viewModel.deleteSet(exerciseIndex: index, setIndex: setIndex)
@@ -137,7 +148,7 @@ struct ActiveWorkoutView: View {
     }
     
     private func timeString(from date: Date) -> String {
-        let elapsed = Date().timeIntervalSince(date)
+        let elapsed = currentTime.timeIntervalSince(date)
         let minutes = Int(elapsed) / 60
         let seconds = Int(elapsed) % 60
         return String(format: "%02d:%02d", minutes, seconds)
@@ -225,6 +236,13 @@ struct ExerciseSessionCard: View {
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
+}
+
+// MARK: - Helper for Sheet Presentation
+struct SelectedExercise: Identifiable {
+    let id = UUID()
+    let index: Int
+    let exercise: Exercise
 }
 
 #Preview {
