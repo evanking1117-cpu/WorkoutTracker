@@ -12,8 +12,8 @@ struct ActiveWorkoutView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     // State to control the visibility of the exercise picker sheet
     @State private var showingExercisePicker = false
-    // State to track the selected exercise index for logging sets
-    @State private var selectedExerciseIndex: Int?
+    // State to track the selected exercise for logging sets
+    @State private var selectedExercise: SelectedExercise?
     // Environment variable to dismiss the current view
     @Environment(\.dismiss) private var dismiss
     // Timer to force view updates for real-time clock
@@ -50,6 +50,7 @@ struct ActiveWorkoutView: View {
             ExercisePickerView(viewModel: viewModel)
         }
         // Sheet for logging a set for a specific exercise
+        .sheet(item: $selectedExercise) { selection in
         .sheet(item: Binding(
             get: {
                 guard let index = selectedExerciseIndex,
@@ -100,7 +101,10 @@ struct ActiveWorkoutView: View {
                     ExerciseSessionCard(
                         session: session,
                         onAddSet: {
-                            selectedExerciseIndex = index
+                            selectedExercise = SelectedExercise(
+                                index: index,
+                                exercise: session.exercise
+                            )
                         },
                         onDeleteSet: { setIndex in
                             viewModel.deleteSet(exerciseIndex: index, setIndex: setIndex)
