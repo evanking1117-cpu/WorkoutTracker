@@ -12,8 +12,6 @@ struct ActiveWorkoutView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     // State to control the visibility of the exercise picker sheet
     @State private var showingExercisePicker = false
-    // State to track the selected exercise for logging sets
-    @State private var selectedExercise: SelectedExercise?
     // Environment variable to dismiss the current view
     @Environment(\.dismiss) private var dismiss
     // Timer to force view updates for real-time clock
@@ -49,14 +47,6 @@ struct ActiveWorkoutView: View {
         .sheet(isPresented: $showingExercisePicker) {
             ExercisePickerView(viewModel: viewModel)
         }
-        // Sheet for logging a set for a specific exercise
-        .sheet(item: $selectedExercise) { selection in
-            LogSetView(
-                viewModel: viewModel,
-                exerciseIndex: selection.index,
-                exercise: selection.exercise
-            )
-        }
         // Timer to update the clock every second
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
             currentTime = Date()
@@ -87,10 +77,11 @@ struct ActiveWorkoutView: View {
                 ForEach(Array(viewModel.currentWorkout!.exercises.enumerated()), id: \.element.id) { index, session in
                     ExerciseSessionCard(
                         session: session,
-                        onAddSet: {
-                            selectedExercise = SelectedExercise(
-                                index: index,
-                                exercise: session.exercise
+                        onSaveSet: { reps, weight in
+                            viewModel.completeSet(
+                                exerciseIndex: index,
+                                reps: reps,
+                                weight: weight
                             )
                         },
                         onDeleteSet: { setIndex in
@@ -166,8 +157,17 @@ struct StatView: View {
 // MARK: - Exercise Session Card
 struct ExerciseSessionCard: View {
     let session: ExerciseSession
-    let onAddSet: () -> Void
+    let onSaveSet: (Int, Double?) -> Void
     let onDeleteSet: (Int) -> Void
+
+    @State private var showingAddSet = false
+    @State private var reps: String = ""
+    @State private var weight: String = ""
+    @FocusState private var focusedField: Field?
+
+    enum Field {
+        case reps, weight
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -212,14 +212,83 @@ struct ExerciseSessionCard: View {
                 }
             }
 
-            Button(action: onAddSet) {
-                Label("Add Set", systemImage: "plus.circle")
-                    .font(.subheadline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
-                    .background(Color.blue.opacity(0.1))
-                    .foregroundColor(.blue)
-                    .cornerRadius(8)
+            // Inline form for adding set
+            if showingAddSet {
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Reps")
+                            .frame(width: 60, alignment: .leading)
+                        TextField("0", text: $reps)
+                            .keyboardType(.numberPad)
+                            .focused($focusedField, equals: .reps)
+                            .textFieldStyle(.roundedBorder)
+                            .multilineTextAlignment(.trailing)
+                    }
+
+                    if session.exercise.equipmentType != .bodyweight {
+                        HStack {
+                            Text("Weight")
+                                .frame(width: 60, alignment: .leading)
+                            TextField("0", text: $weight)
+                                .keyboardType(.decimalPad)
+                                .focused($focusedField, equals: .weight)
+                                .textFieldStyle(.roundedBorder)
+                                .multilineTextAlignment(.trailing)
+                            Text("lbs")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    HStack(spacing: 8) {
+                        Button("Cancel") {
+                            showingAddSet = false
+                            reps = ""
+                            weight = ""
+                            focusedField = nil
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.gray.opacity(0.2))
+                        .foregroundColor(.primary)
+                        .cornerRadius(8)
+
+                        Button("Save") {
+                            saveSet()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(reps.isEmpty || Int(reps) == nil || Int(reps) == 0 ? Color.gray.opacity(0.2) : Color.blue)
+                        .foregroundColor(reps.isEmpty || Int(reps) == nil || Int(reps) == 0 ? .secondary : .white)
+                        .cornerRadius(8)
+                        .disabled(reps.isEmpty || Int(reps) == nil || Int(reps) == 0)
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+            } else {
+                Button(action: {
+                    showingAddSet = true
+                    // Pre-fill with previous set's values
+                    if let lastSet = session.sets.last {
+                        reps = "\(lastSet.reps)"
+                        if let lastWeight = lastSet.weight {
+                            weight = "\(Int(lastWeight))"
+                        }
+                    }
+                    // Auto-focus reps field
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        focusedField = .reps
+                    }
+                }) {
+                    Label("Add Set", systemImage: "plus.circle")
+                        .font(.subheadline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.blue.opacity(0.1))
+                        .foregroundColor(.blue)
+                        .cornerRadius(8)
+                }
             }
         }
         .padding()
@@ -227,13 +296,26 @@ struct ExerciseSessionCard: View {
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
-}
 
-// MARK: - Helper for Sheet Presentation
-struct SelectedExercise: Identifiable {
-    let id = UUID()
-    let index: Int
-    let exercise: Exercise
+    private func saveSet() {
+        guard let repsInt = Int(reps), repsInt > 0 else { return }
+
+        let weightDouble: Double? = if session.exercise.equipmentType == .bodyweight {
+            nil
+        } else if let w = Double(weight), w > 0 {
+            w
+        } else {
+            nil
+        }
+
+        onSaveSet(repsInt, weightDouble)
+
+        // Reset form
+        showingAddSet = false
+        reps = ""
+        weight = ""
+        focusedField = nil
+    }
 }
 
 #Preview {
