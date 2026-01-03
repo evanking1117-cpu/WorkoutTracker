@@ -57,7 +57,7 @@ struct ActiveWorkoutView: View {
                       index < workout.exercises.count else { return nil }
                 return SelectedExercise(index: index, exercise: workout.exercises[index].exercise)
             },
-            set: { newValue in
+            set: { (newValue: SelectedExercise?) in
                 if newValue == nil {
                     selectedExerciseIndex = nil
                 }
