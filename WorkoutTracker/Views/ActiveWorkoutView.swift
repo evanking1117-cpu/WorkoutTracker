@@ -18,7 +18,7 @@ struct ActiveWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     // Timer to force view updates for real-time clock
     @State private var currentTime = Date()
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Header section for the workout
@@ -51,19 +51,6 @@ struct ActiveWorkoutView: View {
         }
         // Sheet for logging a set for a specific exercise
         .sheet(item: $selectedExercise) { selection in
-        .sheet(item: Binding(
-            get: {
-                guard let index = selectedExerciseIndex,
-                      let workout = viewModel.currentWorkout,
-                      index < workout.exercises.count else { return nil }
-                return SelectedExercise(index: index, exercise: workout.exercises[index].exercise)
-            },
-            set: { (newValue: SelectedExercise?) in
-                if newValue == nil {
-                    selectedExerciseIndex = nil
-                }
-            }
-        )) { selection in
             LogSetView(
                 viewModel: viewModel,
                 exerciseIndex: selection.index,
@@ -75,7 +62,7 @@ struct ActiveWorkoutView: View {
             currentTime = Date()
         }
     }
-    
+
     // Header section for the workout view
     private var workoutHeader: some View {
         VStack(spacing: 12) {
@@ -83,7 +70,7 @@ struct ActiveWorkoutView: View {
                 Text(timeString(from: workout.startTime))
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .monospacedDigit()
-                
+
                 HStack(spacing: 24) {
                     StatView(value: "\(workout.exercises.count)", label: "Exercises")
                     StatView(value: "\(workout.totalSets)", label: "Sets")
@@ -93,7 +80,7 @@ struct ActiveWorkoutView: View {
         .padding()
         .background(Color(.systemGray6))
     }
-    
+
     private var exerciseList: some View {
         ScrollView {
             VStack(spacing: 12) {
@@ -111,13 +98,13 @@ struct ActiveWorkoutView: View {
                         }
                     )
                 }
-                
+
                 addExerciseButton
             }
             .padding()
         }
     }
-    
+
     private var emptyState: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -130,13 +117,13 @@ struct ActiveWorkoutView: View {
             Text("Add your first exercise to start tracking")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-            
+
             addExerciseButton
             Spacer()
         }
         .padding()
     }
-    
+
     private var addExerciseButton: some View {
         Button(action: {
             showingExercisePicker = true
@@ -150,7 +137,7 @@ struct ActiveWorkoutView: View {
                 .cornerRadius(12)
         }
     }
-    
+
     private func timeString(from date: Date) -> String {
         let elapsed = currentTime.timeIntervalSince(date)
         let minutes = Int(elapsed) / 60
@@ -163,7 +150,7 @@ struct ActiveWorkoutView: View {
 struct StatView: View {
     let value: String
     let label: String
-    
+
     var body: some View {
         VStack(spacing: 4) {
             Text(value)
@@ -181,7 +168,7 @@ struct ExerciseSessionCard: View {
     let session: ExerciseSession
     let onAddSet: () -> Void
     let onDeleteSet: (Int) -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -197,7 +184,7 @@ struct ExerciseSessionCard: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            
+
             if !session.sets.isEmpty {
                 ForEach(Array(session.sets.enumerated()), id: \.element.id) { index, set in
                     HStack {
@@ -212,7 +199,7 @@ struct ExerciseSessionCard: View {
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         Button(action: {
                             onDeleteSet(index)
                         }) {
@@ -224,7 +211,7 @@ struct ExerciseSessionCard: View {
                     .padding(.vertical, 4)
                 }
             }
-            
+
             Button(action: onAddSet) {
                 Label("Add Set", systemImage: "plus.circle")
                     .font(.subheadline)
