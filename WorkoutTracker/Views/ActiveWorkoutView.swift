@@ -51,6 +51,19 @@ struct ActiveWorkoutView: View {
         }
         // Sheet for logging a set for a specific exercise
         .sheet(item: $selectedExercise) { selection in
+        .sheet(item: Binding(
+            get: {
+                guard let index = selectedExerciseIndex,
+                      let workout = viewModel.currentWorkout,
+                      index < workout.exercises.count else { return nil }
+                return SelectedExercise(index: index, exercise: workout.exercises[index].exercise)
+            },
+            set: { (newValue: SelectedExercise?) in
+                if newValue == nil {
+                    selectedExerciseIndex = nil
+                }
+            }
+        )) { selection in
             LogSetView(
                 viewModel: viewModel,
                 exerciseIndex: selection.index,
