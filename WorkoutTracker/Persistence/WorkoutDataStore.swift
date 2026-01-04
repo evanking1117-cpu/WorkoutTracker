@@ -10,6 +10,7 @@ import Foundation
 final class WorkoutDataStore {
     private let userDefaults = UserDefaults.standard
     private let workoutsKey = "savedWorkouts"
+    private let templatesKey = "workoutTemplates"
     
     func save(_ workout: Workout) {
         var workouts = loadWorkouts()
@@ -53,5 +54,47 @@ final class WorkoutDataStore {
     func clearAll() {
         // Remove the workouts key from UserDefaults
         userDefaults.removeObject(forKey: workoutsKey)
+    }
+
+    // MARK: - Template Management
+
+    /// Saves a workout template to UserDefaults
+    func save(_ template: WorkoutTemplate) {
+        var templates = loadTemplates()
+
+        // Update existing template or add new one
+        if let index = templates.firstIndex(where: { $0.id == template.id }) {
+            templates[index] = template
+        } else {
+            templates.append(template)
+        }
+
+        if let encoded = try? JSONEncoder().encode(templates) {
+            userDefaults.set(encoded, forKey: templatesKey)
+        }
+    }
+
+    /// Loads all saved templates from UserDefaults
+    func loadTemplates() -> [WorkoutTemplate] {
+        guard let data = userDefaults.data(forKey: templatesKey),
+              let templates = try? JSONDecoder().decode([WorkoutTemplate].self, from: data) else {
+            return []
+        }
+        return templates.sorted { $0.name < $1.name }
+    }
+
+    /// Deletes a specific template from the data store
+    func deleteTemplate(_ template: WorkoutTemplate) {
+        var templates = loadTemplates()
+        templates.removeAll { $0.id == template.id }
+
+        if let encoded = try? JSONEncoder().encode(templates) {
+            userDefaults.set(encoded, forKey: templatesKey)
+        }
+    }
+
+    /// Clears all saved templates from UserDefaults
+    func clearAllTemplates() {
+        userDefaults.removeObject(forKey: templatesKey)
     }
 }
