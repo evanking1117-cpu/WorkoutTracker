@@ -107,19 +107,6 @@ struct TemplateExercisePickerView: View {
     }
 }
 
-// Extension for equipment icons (same as in ExercisePickerView)
-extension EquipmentType {
-    var icon: String {
-        switch self {
-        case .bodyweight: return "figure.walk"
-        case .barbell: return "arrow.left.and.right"
-        case .dumbbell: return "dumbbell"
-        case .machine: return "gearshape"
-        case .cable: return "cable.connector"
-        }
-    }
-}
-
 #Preview {
     TemplateExercisePickerView(selectedExercises: .constant([]))
 }
