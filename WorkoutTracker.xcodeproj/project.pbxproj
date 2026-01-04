@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E3492AEC2F09FD8700C45733 /* CreateTemplateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3492AE72F09FD8700C45733 /* CreateTemplateView.swift */; };
+		E3492AED2F09FD8700C45733 /* TemplateDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3492AE82F09FD8700C45733 /* TemplateDetailView.swift */; };
+		E3492AEE2F09FD8700C45733 /* TemplatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3492AEB2F09FD8700C45733 /* TemplatePickerView.swift */; };
+		E3492AEF2F09FD8700C45733 /* TemplateExercisePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3492AE92F09FD8700C45733 /* TemplateExercisePickerView.swift */; };
+		E3492AF02F09FD8700C45733 /* TemplateManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3492AEA2F09FD8700C45733 /* TemplateManagerView.swift */; };
+		E3492AF12F09FD8700C45733 /* ActiveWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3492AE62F09FD8700C45733 /* ActiveWorkoutView.swift */; };
+		E3492AF32F09FD9400C45733 /* WorkoutTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3492AF22F09FD9400C45733 /* WorkoutTemplate.swift */; };
 		E388C5152F058FC000E0C468 /* WorkoutListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E388C5142F058FB400E0C468 /* WorkoutListView.swift */; };
 		E388C5172F058FFA00E0C468 /* ActiveWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E388C5162F058FEC00E0C468 /* ActiveWorkoutView.swift */; };
 		E388C5192F05902E00E0C468 /* ExercisePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E388C5182F05901700E0C468 /* ExercisePickerView.swift */; };
@@ -41,6 +48,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E3492AE62F09FD8700C45733 /* ActiveWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutView.swift; sourceTree = "<group>"; };
+		E3492AE72F09FD8700C45733 /* CreateTemplateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTemplateView.swift; sourceTree = "<group>"; };
+		E3492AE82F09FD8700C45733 /* TemplateDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateDetailView.swift; sourceTree = "<group>"; };
+		E3492AE92F09FD8700C45733 /* TemplateExercisePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateExercisePickerView.swift; sourceTree = "<group>"; };
+		E3492AEA2F09FD8700C45733 /* TemplateManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateManagerView.swift; sourceTree = "<group>"; };
+		E3492AEB2F09FD8700C45733 /* TemplatePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatePickerView.swift; sourceTree = "<group>"; };
+		E3492AF22F09FD9400C45733 /* WorkoutTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutTemplate.swift; sourceTree = "<group>"; };
 		E388C5142F058FB400E0C468 /* WorkoutListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListView.swift; sourceTree = "<group>"; };
 		E388C5162F058FEC00E0C468 /* ActiveWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutView.swift; sourceTree = "<group>"; };
 		E388C5182F05901700E0C468 /* ExercisePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExercisePickerView.swift; sourceTree = "<group>"; };
@@ -136,6 +150,7 @@
 		E3D65AF22F04B48D00F3A968 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E3492AF22F09FD9400C45733 /* WorkoutTemplate.swift */,
 				E3D65AFC2F04B59600F3A968 /* Workout.swift */,
 				E3D65AF92F04B55800F3A968 /* WorkoutSet.swift */,
 				E3D65AF72F04B53400F3A968 /* Exercise.swift */,
@@ -163,6 +178,12 @@
 		E3D65AF52F04B4EA00F3A968 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E3492AE62F09FD8700C45733 /* ActiveWorkoutView.swift */,
+				E3492AE72F09FD8700C45733 /* CreateTemplateView.swift */,
+				E3492AE82F09FD8700C45733 /* TemplateDetailView.swift */,
+				E3492AE92F09FD8700C45733 /* TemplateExercisePickerView.swift */,
+				E3492AEA2F09FD8700C45733 /* TemplateManagerView.swift */,
+				E3492AEB2F09FD8700C45733 /* TemplatePickerView.swift */,
 				E388C51A2F05904A00E0C468 /* LogSetView.swift */,
 				E388C5182F05901700E0C468 /* ExercisePickerView.swift */,
 				E388C5162F058FEC00E0C468 /* ActiveWorkoutView.swift */,
@@ -330,6 +351,13 @@
 				E3D65AFD2F04B5A100F3A968 /* Workout.swift in Sources */,
 				E3D65AF82F04B55100F3A968 /* Exercise.swift in Sources */,
 				E3D65B052F04B67E00F3A968 /* WorkoutDataStore.swift in Sources */,
+				E3492AEC2F09FD8700C45733 /* CreateTemplateView.swift in Sources */,
+				E3492AED2F09FD8700C45733 /* TemplateDetailView.swift in Sources */,
+				E3492AEE2F09FD8700C45733 /* TemplatePickerView.swift in Sources */,
+				E3492AEF2F09FD8700C45733 /* TemplateExercisePickerView.swift in Sources */,
+				E3492AF02F09FD8700C45733 /* TemplateManagerView.swift in Sources */,
+				E3492AF12F09FD8700C45733 /* ActiveWorkoutView.swift in Sources */,
+				E3492AF32F09FD9400C45733 /* WorkoutTemplate.swift in Sources */,
 				E388C5172F058FFA00E0C468 /* ActiveWorkoutView.swift in Sources */,
 				E3D65B032F04B62300F3A968 /* WorkoutViewModel.swift in Sources */,
 				E3D65B012F04B5FA00F3A968 /* ManualRepCounter.swift in Sources */,
