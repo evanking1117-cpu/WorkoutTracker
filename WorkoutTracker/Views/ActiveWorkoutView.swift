@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ActiveWorkoutView: View {
     // ViewModel to manage the workout state and interactions
@@ -16,6 +17,7 @@ struct ActiveWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     // Timer to force view updates for real-time clock
     @State private var currentTime = Date()
+    @State private var timerCancellable: AnyCancellable?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -47,9 +49,18 @@ struct ActiveWorkoutView: View {
         .sheet(isPresented: $showingExercisePicker) {
             ExercisePickerView(viewModel: viewModel)
         }
-        // Timer to update the clock every second
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-            currentTime = Date()
+        .onAppear {
+            // Start the timer when view appears
+            timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+                .autoconnect()
+                .sink { _ in
+                    currentTime = Date()
+                }
+        }
+        .onDisappear {
+            // Cancel the timer when view disappears
+            timerCancellable?.cancel()
+            timerCancellable = nil
         }
     }
 
