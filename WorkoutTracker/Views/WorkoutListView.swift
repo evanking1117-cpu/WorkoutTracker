@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WorkoutListView: View {
     @StateObject private var viewModel = WorkoutViewModel()
+    @State private var showingTemplatePicker = false
+    @State private var showingTemplateManager = false
     
     var body: some View {
         NavigationView {
@@ -21,6 +23,14 @@ struct WorkoutListView: View {
             }
             .navigationTitle("Workouts")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        showingTemplateManager = true
+                    }) {
+                        Label("Templates", systemImage: "list.bullet.rectangle")
+                    }
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if viewModel.currentWorkout != nil {
                         NavigationLink(destination: ActiveWorkoutView(viewModel: viewModel)) {
@@ -30,23 +40,45 @@ struct WorkoutListView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showingTemplatePicker) {
+                TemplatePickerView(viewModel: viewModel)
+            }
+            .sheet(isPresented: $showingTemplateManager) {
+                TemplateManagerView(viewModel: viewModel)
+            }
         }
     }
     
     private var mainContent: some View {
         VStack(spacing: 20) {
-            // Start Workout Button
+            // Start Workout Buttons
             if viewModel.currentWorkout == nil {
-                Button(action: {
-                    viewModel.startWorkout()
-                }) {
-                    Label("Start New Workout", systemImage: "play.circle.fill")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
+                VStack(spacing: 12) {
+                    // Start Blank Workout
+                    Button(action: {
+                        viewModel.startWorkout()
+                    }) {
+                        Label("Start Blank Workout", systemImage: "play.circle.fill")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(12)
+                    }
+
+                    // Start from Template
+                    Button(action: {
+                        showingTemplatePicker = true
+                    }) {
+                        Label("Start from Template", systemImage: "doc.text.fill")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(12)
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.top)
