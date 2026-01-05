@@ -45,9 +45,12 @@ final class WorkoutViewModel: ObservableObject {
     func startWorkout(from template: WorkoutTemplate) {
         var workout = Workout()
 
-        // Add all exercises from template
+        // Add all exercises from template with target sets
         for templateExercise in template.exercises {
-            let session = ExerciseSession(exercise: templateExercise.exercise)
+            let session = ExerciseSession(
+                exercise: templateExercise.exercise,
+                targetSets: templateExercise.targetSets
+            )
             workout.exercises.append(session)
         }
 

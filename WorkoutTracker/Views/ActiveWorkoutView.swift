@@ -180,6 +180,13 @@ struct ExerciseSessionCard: View {
         case reps, weight
     }
 
+    var shouldShowForm: Bool {
+        if let target = session.targetSets {
+            return session.sets.count < target
+        }
+        return showingAddSet
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -191,9 +198,15 @@ struct ExerciseSessionCard: View {
                         .foregroundColor(.secondary)
                 }
                 Spacer()
-                Text("\(session.sets.count) sets")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                if let target = session.targetSets {
+                    Text("\(session.sets.count) of \(target) sets")
+                        .font(.subheadline)
+                        .foregroundColor(session.sets.count >= target ? .green : .secondary)
+                } else {
+                    Text("\(session.sets.count) sets")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
             }
 
             if !session.sets.isEmpty {
@@ -224,8 +237,19 @@ struct ExerciseSessionCard: View {
             }
 
             // Inline form for adding set
-            if showingAddSet {
+            if shouldShowForm {
                 VStack(spacing: 8) {
+                    // Set header if from template
+                    if let target = session.targetSets {
+                        HStack {
+                            Text("Set \(session.sets.count + 1) of \(target)")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.blue)
+                            Spacer()
+                        }
+                    }
+
                     HStack {
                         Text("Reps")
                             .frame(width: 60, alignment: .leading)
@@ -277,7 +301,23 @@ struct ExerciseSessionCard: View {
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
-            } else {
+                .onAppear {
+                    // Pre-fill with previous set's values
+                    if let lastSet = session.sets.last {
+                        reps = "\(lastSet.reps)"
+                        if let lastWeight = lastSet.weight {
+                            weight = "\(Int(lastWeight))"
+                        }
+                    }
+                    // Auto-focus reps field when from template
+                    if session.targetSets != nil {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            focusedField = .reps
+                        }
+                    }
+                }
+            } else if session.targetSets == nil {
+                // Only show "Add Set" button if not from template
                 Button(action: {
                     showingAddSet = true
                     // Pre-fill with previous set's values
@@ -326,6 +366,13 @@ struct ExerciseSessionCard: View {
         reps = ""
         weight = ""
         focusedField = nil
+
+        // If from template and more sets to complete, refocus for next set
+        if let target = session.targetSets, session.sets.count + 1 < target {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                focusedField = .reps
+            }
+        }
     }
 }
 
