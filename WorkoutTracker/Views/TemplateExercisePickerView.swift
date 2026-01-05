@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct TemplateExercisePickerView: View {
+    @ObservedObject var viewModel: WorkoutViewModel
     @Binding var selectedExercises: [TemplateExerciseBuilder]
     @Environment(\.dismiss) private var dismiss
 
     @State private var searchText = ""
     @State private var selectedMuscleGroup: MuscleGroup? = nil
+    @State private var showingCreateExercise = false
 
-    // Hardcoded exercise database (same as ExercisePickerView)
-    private let allExercises = [
+    // Built-in exercise database
+    private let builtInExercises = [
         Exercise(name: "Bench Press", muscleGroup: .chest, equipmentType: .barbell),
         Exercise(name: "Squat", muscleGroup: .legs, equipmentType: .barbell),
         Exercise(name: "Deadlift", muscleGroup: .back, equipmentType: .barbell),
@@ -27,6 +29,10 @@ struct TemplateExercisePickerView: View {
         Exercise(name: "Tricep Dips", muscleGroup: .arms, equipmentType: .bodyweight),
         Exercise(name: "Plank", muscleGroup: .core, equipmentType: .bodyweight)
     ]
+
+    var allExercises: [Exercise] {
+        builtInExercises + viewModel.customExercises
+    }
 
     var filteredExercises: [Exercise] {
         allExercises.filter { exercise in
@@ -89,11 +95,22 @@ struct TemplateExercisePickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, prompt: "Search exercises")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        showingCreateExercise = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         dismiss()
                     }
                 }
+            }
+            .sheet(isPresented: $showingCreateExercise) {
+                CreateExerciseView(viewModel: viewModel)
             }
         }
     }
@@ -108,5 +125,8 @@ struct TemplateExercisePickerView: View {
 }
 
 #Preview {
-    TemplateExercisePickerView(selectedExercises: .constant([]))
+    TemplateExercisePickerView(
+        viewModel: WorkoutViewModel(),
+        selectedExercises: .constant([])
+    )
 }

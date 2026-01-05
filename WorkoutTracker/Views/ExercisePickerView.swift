@@ -10,9 +10,9 @@ import SwiftUI
 struct ExercisePickerView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss
-    
-    // Sample exercises (V0.1 - hardcoded, V0.2 - load from database)
-    private let exercises = [
+
+    // Built-in exercises
+    private let builtInExercises = [
         Exercise(name: "Bench Press", muscleGroup: .chest, equipmentType: .barbell),
         Exercise(name: "Squat", muscleGroup: .legs, equipmentType: .barbell),
         Exercise(name: "Deadlift", muscleGroup: .back, equipmentType: .barbell),
@@ -24,12 +24,17 @@ struct ExercisePickerView: View {
         Exercise(name: "Tricep Dips", muscleGroup: .arms, equipmentType: .bodyweight),
         Exercise(name: "Plank", muscleGroup: .core, equipmentType: .bodyweight),
     ]
-    
+
     @State private var searchText = ""
     @State private var selectedMuscleGroup: MuscleGroup?
-    
+    @State private var showingCreateExercise = false
+
+    var allExercises: [Exercise] {
+        builtInExercises + viewModel.customExercises
+    }
+
     var filteredExercises: [Exercise] {
-        exercises.filter { exercise in
+        allExercises.filter { exercise in
             let matchesSearch = searchText.isEmpty ||
                 exercise.name.localizedCaseInsensitiveContains(searchText)
             let matchesMuscleGroup = selectedMuscleGroup == nil ||
@@ -95,8 +100,19 @@ struct ExercisePickerView: View {
                         dismiss()
                     }
                 }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingCreateExercise = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
             }
             .searchable(text: $searchText, prompt: "Search exercises")
+            .sheet(isPresented: $showingCreateExercise) {
+                CreateExerciseView(viewModel: viewModel)
+            }
         }
     }
 }

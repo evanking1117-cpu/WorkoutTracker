@@ -13,6 +13,7 @@ final class WorkoutViewModel: ObservableObject {
     @Published var currentWorkout: Workout?
     @Published var workoutHistory: [Workout] = []
     @Published var workoutTemplates: [WorkoutTemplate] = []
+    @Published var customExercises: [Exercise] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
@@ -31,6 +32,7 @@ final class WorkoutViewModel: ObservableObject {
         self.dataStore = dataStore
         loadWorkoutHistory()
         loadTemplates()
+        loadCustomExercises()
     }
     
     // MARK: - Workout Lifecycle
@@ -143,5 +145,24 @@ final class WorkoutViewModel: ObservableObject {
         let template = WorkoutTemplate(name: name, exercises: templateExercises)
         saveTemplate(template)
         return template
+    }
+
+    // MARK: - Custom Exercise Management
+
+    /// Loads all custom exercises from the data store
+    private func loadCustomExercises() {
+        customExercises = dataStore.loadCustomExercises()
+    }
+
+    /// Saves a custom exercise
+    func saveCustomExercise(_ exercise: Exercise) {
+        dataStore.save(exercise)
+        loadCustomExercises()
+    }
+
+    /// Deletes a custom exercise from the data store
+    func deleteCustomExercise(_ exercise: Exercise) {
+        dataStore.deleteCustomExercise(exercise)
+        customExercises.removeAll { $0.id == exercise.id }
     }
 }

@@ -80,7 +80,10 @@ struct CreateTemplateView: View {
                 }
             }
             .sheet(isPresented: $showingExercisePicker) {
-                TemplateExercisePickerView(selectedExercises: $selectedExercises)
+                TemplateExercisePickerView(
+                    viewModel: viewModel,
+                    selectedExercises: $selectedExercises
+                )
             }
         }
     }
