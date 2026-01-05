@@ -11,6 +11,7 @@ final class WorkoutDataStore {
     private let userDefaults = UserDefaults.standard
     private let workoutsKey = "savedWorkouts"
     private let templatesKey = "workoutTemplates"
+    private let customExercisesKey = "customExercises"
     
     func save(_ workout: Workout) {
         var workouts = loadWorkouts()
@@ -96,5 +97,47 @@ final class WorkoutDataStore {
     /// Clears all saved templates from UserDefaults
     func clearAllTemplates() {
         userDefaults.removeObject(forKey: templatesKey)
+    }
+
+    // MARK: - Custom Exercise Management
+
+    /// Saves a custom exercise to UserDefaults
+    func save(_ exercise: Exercise) {
+        var exercises = loadCustomExercises()
+
+        // Update existing exercise or add new one
+        if let index = exercises.firstIndex(where: { $0.id == exercise.id }) {
+            exercises[index] = exercise
+        } else {
+            exercises.append(exercise)
+        }
+
+        if let encoded = try? JSONEncoder().encode(exercises) {
+            userDefaults.set(encoded, forKey: customExercisesKey)
+        }
+    }
+
+    /// Loads all custom exercises from UserDefaults
+    func loadCustomExercises() -> [Exercise] {
+        guard let data = userDefaults.data(forKey: customExercisesKey),
+              let exercises = try? JSONDecoder().decode([Exercise].self, from: data) else {
+            return []
+        }
+        return exercises.sorted { $0.name < $1.name }
+    }
+
+    /// Deletes a custom exercise from the data store
+    func deleteCustomExercise(_ exercise: Exercise) {
+        var exercises = loadCustomExercises()
+        exercises.removeAll { $0.id == exercise.id }
+
+        if let encoded = try? JSONEncoder().encode(exercises) {
+            userDefaults.set(encoded, forKey: customExercisesKey)
+        }
+    }
+
+    /// Clears all custom exercises from UserDefaults
+    func clearAllCustomExercises() {
+        userDefaults.removeObject(forKey: customExercisesKey)
     }
 }
