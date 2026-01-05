@@ -10,6 +10,7 @@ import SwiftUI
 struct TemplatePickerView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showingCreateTemplate = false
 
     var body: some View {
         NavigationView {
@@ -28,22 +29,48 @@ struct TemplatePickerView: View {
                         dismiss()
                     }
                 }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingCreateTemplate = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingCreateTemplate) {
+                CreateTemplateView(viewModel: viewModel)
             }
         }
     }
 
     private var emptyState: some View {
         VStack(spacing: 20) {
+            Spacer()
             Image(systemName: "doc.text")
                 .font(.system(size: 60))
                 .foregroundColor(.gray.opacity(0.5))
             Text("No Templates Yet")
                 .font(.title2)
                 .foregroundColor(.secondary)
-            Text("Create a template from the Templates menu")
+            Text("Create a template to get started")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
+
+            Button(action: {
+                showingCreateTemplate = true
+            }) {
+                Label("Create Template", systemImage: "plus.circle.fill")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(12)
+            }
+            .padding(.horizontal, 40)
+            Spacer()
         }
         .padding()
     }
