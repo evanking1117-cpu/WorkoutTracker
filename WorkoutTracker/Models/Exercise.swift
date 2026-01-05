@@ -43,6 +43,6 @@ enum MuscleGroup: String, Codable, CaseIterable {
 }
 
 // Enum representing the types of equipment used for exercises
-enum EquipmentType: String, Codable {
+enum EquipmentType: String, Codable, CaseIterable {
     case bodyweight, barbell, dumbbell, machine, cable
 }
