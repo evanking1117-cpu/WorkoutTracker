@@ -7,12 +7,17 @@
 
 import SwiftUI
 
+/// View for creating a custom exercise
+/// Allows users to define a new exercise with a name, muscle group, and equipment type
 struct CreateExerciseView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss
 
+    // State for the exercise name input
     @State private var exerciseName: String = ""
+    // State for the selected muscle group
     @State private var selectedMuscleGroup: MuscleGroup = .chest
+    // State for the selected equipment type
     @State private var selectedEquipmentType: EquipmentType = .barbell
 
     var body: some View {

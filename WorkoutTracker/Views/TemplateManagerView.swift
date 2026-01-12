@@ -7,9 +7,12 @@
 
 import SwiftUI
 
+/// View for managing workout templates
+/// Displays all saved templates and allows users to create, view, and delete them
 struct TemplateManagerView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss
+    // State to control the visibility of the create template sheet
     @State private var showingCreateTemplate = false
 
     var body: some View {

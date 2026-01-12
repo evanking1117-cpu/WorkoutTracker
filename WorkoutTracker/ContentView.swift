@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// Boilerplate view created by Xcode when the project was initialized
+/// Note: This view is not currently used in the app. WorkoutListView is the actual entry point.
 struct ContentView: View {
     var body: some View {
         VStack {

@@ -7,9 +7,12 @@
 
 import SwiftUI
 
+/// View for selecting a workout template to start a new workout
+/// Displays a list of saved templates and allows users to create new ones
 struct TemplatePickerView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss
+    // State to control the visibility of the create template sheet
     @State private var showingCreateTemplate = false
 
     var body: some View {

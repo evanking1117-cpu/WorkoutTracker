@@ -7,9 +7,14 @@
 
 import SwiftUI
 
+/// Main view of the app that displays the list of workout history
+/// Provides navigation to start new workouts, use templates, and manage templates
 struct WorkoutListView: View {
+    // StateObject to create and manage the ViewModel for the entire app
     @StateObject private var viewModel = WorkoutViewModel()
+    // State to control the visibility of the template picker sheet
     @State private var showingTemplatePicker = false
+    // State to control the visibility of the template manager sheet
     @State private var showingTemplateManager = false
     
     var body: some View {

@@ -7,17 +7,26 @@
 
 import SwiftUI
 
+/// View for logging a set during a workout
+/// Allows users to enter reps and weight for a specific exercise
+/// Note: This view is not currently used in the app. Set logging is done inline in ActiveWorkoutView.
 struct LogSetView: View {
     @ObservedObject var viewModel: WorkoutViewModel
+    // Index of the exercise in the current workout
     let exerciseIndex: Int
+    // The exercise for which the set is being logged
     let exercise: Exercise
-    
+
     @Environment(\.dismiss) private var dismiss
-    
+
+    // State for reps input
     @State private var reps: String = ""
+    // State for weight input
     @State private var weight: String = ""
+    // Focus state to manage keyboard focus between fields
     @FocusState private var focusedField: Field?
-    
+
+    /// Enum to represent the fields that can have keyboard focus
     enum Field {
         case reps, weight
     }
