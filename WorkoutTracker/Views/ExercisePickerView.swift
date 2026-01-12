@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+/// View for selecting exercises to add to the current workout
+/// Provides search, filtering by muscle group, and the ability to create custom exercises
 struct ExercisePickerView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss
 
-    // Built-in exercises
+    // Built-in exercises available by default
     private let builtInExercises = [
         Exercise(name: "Bench Press", muscleGroup: .chest, equipmentType: .barbell),
         Exercise(name: "Squat", muscleGroup: .legs, equipmentType: .barbell),
@@ -25,14 +27,19 @@ struct ExercisePickerView: View {
         Exercise(name: "Plank", muscleGroup: .core, equipmentType: .bodyweight),
     ]
 
+    // State for search text input
     @State private var searchText = ""
+    // State for the currently selected muscle group filter
     @State private var selectedMuscleGroup: MuscleGroup?
+    // State to control the visibility of the create exercise sheet
     @State private var showingCreateExercise = false
 
+    /// Combines built-in exercises with user-created custom exercises
     var allExercises: [Exercise] {
         builtInExercises + viewModel.customExercises
     }
 
+    /// Filters exercises based on search text and selected muscle group
     var filteredExercises: [Exercise] {
         allExercises.filter { exercise in
             let matchesSearch = searchText.isEmpty ||

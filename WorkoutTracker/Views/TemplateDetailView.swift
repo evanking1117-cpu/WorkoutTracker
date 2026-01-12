@@ -7,7 +7,10 @@
 
 import SwiftUI
 
+/// View for displaying details of a specific workout template
+/// Shows template information and provides the option to start a workout from the template
 struct TemplateDetailView: View {
+    // The template to display
     let template: WorkoutTemplate
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss

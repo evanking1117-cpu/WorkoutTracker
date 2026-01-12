@@ -7,16 +7,22 @@
 
 import SwiftUI
 
+/// View for selecting exercises when creating a workout template
+/// Similar to ExercisePickerView but specifically for template creation
 struct TemplateExercisePickerView: View {
     @ObservedObject var viewModel: WorkoutViewModel
+    // Binding to the list of exercises being added to the template
     @Binding var selectedExercises: [TemplateExerciseBuilder]
     @Environment(\.dismiss) private var dismiss
 
+    // State for search text input
     @State private var searchText = ""
+    // State for the currently selected muscle group filter
     @State private var selectedMuscleGroup: MuscleGroup? = nil
+    // State to control the visibility of the create exercise sheet
     @State private var showingCreateExercise = false
 
-    // Built-in exercise database
+    // Built-in exercises available by default
     private let builtInExercises = [
         Exercise(name: "Bench Press", muscleGroup: .chest, equipmentType: .barbell),
         Exercise(name: "Squat", muscleGroup: .legs, equipmentType: .barbell),
@@ -30,6 +36,7 @@ struct TemplateExercisePickerView: View {
         Exercise(name: "Plank", muscleGroup: .core, equipmentType: .bodyweight)
     ]
 
+    /// Combines built-in exercises with user-created custom exercises
     var allExercises: [Exercise] {
         builtInExercises + viewModel.customExercises
     }

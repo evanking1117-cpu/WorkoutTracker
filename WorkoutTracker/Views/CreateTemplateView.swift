@@ -7,12 +7,17 @@
 
 import SwiftUI
 
+/// View for creating a new workout template
+/// Allows users to name the template, add exercises, and set target sets for each exercise
 struct CreateTemplateView: View {
     @ObservedObject var viewModel: WorkoutViewModel
     @Environment(\.dismiss) private var dismiss
 
+    // State for the template name input
     @State private var templateName: String = ""
+    // State for the list of exercises added to the template
     @State private var selectedExercises: [TemplateExerciseBuilder] = []
+    // State to control the visibility of the exercise picker sheet
     @State private var showingExercisePicker = false
 
     var body: some View {
